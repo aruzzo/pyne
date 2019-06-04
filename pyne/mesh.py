@@ -3,6 +3,7 @@ from pyne.material import Material, MaterialLibrary, MultiMaterial
 import sys
 import copy
 import itertools
+import inspect
 from collections import Iterable, Sequence
 from warnings import warn
 from pyne.utils import QAWarning
@@ -704,9 +705,18 @@ class Mesh(object):
             stored in self.dims.
 
         """
+        # obtain param names and default values
+        args, _, _, defaults = inspect.getargspec(Mesh.__init__)
+
+        #check if param values are all default, indicating empty initialization
+        allDefault = True
+        for arg, default in zip(args[1:], defaults):
+            if eval(arg) != default:
+                allDefault = False
+                break
+
         # if Mesh is made and no parameters passed, raise MeshError
-        if mesh is None and not structured and structured_coords is None and \
-            structured_set is None and structured_ordering=='xyz' and mats==():
+        if allDefault:
             raise MeshError("Trivial mesh instantiation "
                             "For structured mesh instantiation, need to "
                                 "supply exactly one of the following:\n"
