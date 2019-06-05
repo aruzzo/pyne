@@ -707,13 +707,9 @@ class Mesh(object):
         """
         # obtain param names and default values
         args, _, _, defaults = inspect.getargspec(Mesh.__init__)
-
-        #check if param values are all default, indicating empty initialization
-        allDefault = True
-        for arg, default in zip(args[1:], defaults):
-            if eval(arg) != default:
-                allDefault = False
-                break
+        #create tuple of param values using list comprehension
+        args = tuple([eval(arg) for arg in args[1:]])
+        allDefault = args == defaults
 
         # if Mesh is made and no parameters passed, raise MeshError
         if allDefault:
